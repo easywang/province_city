@@ -15,9 +15,14 @@ function makeOne($id, $level)
     $data = get_children($id);
     $data = json_decode($data);
 
+    if(count($data)< 1){
+        file_put_contents('error.log', "\r\nfail at: $id", FILE_APPEND);
+        return;
+    }
+
     foreach ($data as $value) {
         $code     = $value->region_id;
-        $name     = iconv($value->region_name, 'utf-8', 'gbk');
+        $name     =  $value->region_name ;
         $parentid = $id;
         save_data($code, $name, $parentid, $level);
         echo "\r\n $code, $name";
@@ -26,6 +31,7 @@ function makeOne($id, $level)
     if ($level <= 2) {
         foreach ($data as $value) {
             $code = $value->region_id;
+            sleep(1);
             echo "\r\n===========child: " . $value->region_name;
             makeOne($code, $level);
         }
